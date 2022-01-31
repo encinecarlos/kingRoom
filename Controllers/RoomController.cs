@@ -1,4 +1,5 @@
 using kingsRoom.Application.Command.KingRoom;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace kingsRoom.Controllers
@@ -7,9 +8,16 @@ namespace kingsRoom.Controllers
     [Route("[controller]")]
     public class RoomController : ControllerBase
     {
-        public ActionResult<KingRoomCommand> DefinekingRoom()
+        private IMediator Mediator { get; }
+
+        public RoomController(IMediator mediator)
         {
-            var response = new KingRoomCommand();
+            Mediator = mediator;
+        }
+
+        public async Task<ActionResult<KingRoomCommand>> DefinekingRoom([FromBody] KingRoomRequest request, CancellationToken cancellationToken)
+        {
+            var response = await Mediator.Send(request, cancellationToken);
 
             return Ok(response);
         }
